@@ -1,0 +1,30 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.DS_Store
+.env
+.env.local
+.env.*.local
+/build
+/dist
+coverage/
+.vscode/
+.idea/
+*.log
+
+# Backend
+/backend/node_modules
+/backend/.env
+/backend/uploads
+
+# Client
+/client/node_modules
+/client/dist
+/client/.vite
+
+# OS
+Thumbs.db
+ehthumbs.db
