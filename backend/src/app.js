@@ -12,9 +12,35 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
+
+// Allow the configured CLIENT_URL, common local dev ports, and any
+// *.vercel.app origin (covers production + every preview deployment)
+// without needing to update CLIENT_URL every time Vercel generates a new URL.
+const allowedOrigins = [process.env.CLIENT_URL, 'http://localhost:5173', 'http://localhost:3000'].filter(
+  Boolean
+);
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || true,
+    origin: (origin, callback) => {
+      // No origin header = same-origin request, curl, Postman, server-to-server
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      try {
+        const hostname = new URL(origin).hostname;
+        if (hostname.endsWith('.vercel.app')) {
+          return callback(null, true);
+        }
+      } catch {
+        // malformed origin header, fall through to rejection
+      }
+
+      return callback(new Error(`Not allowed by CORS: ${origin}`));
+    },
     credentials: true
   })
 );
